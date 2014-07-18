@@ -43,6 +43,9 @@ class Homestead
     # Register All Of The Configured Shared Folders
     settings["folders"].each do |folder|
       config.vm.synced_folder folder["map"], folder["to"], type: folder["type"] ||= nil
+      config.vm.provider "virtualbox" do |vb|
+        vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate" + folder["to"], "1"]
+      end
     end
 
     # Install All The Configured Nginx Sites
