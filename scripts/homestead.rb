@@ -65,5 +65,22 @@ class Homestead
         end
       end
     end
+
+    # Create the databases and grant access
+    if settings.has_key?("databases")
+        settings["databases"].each do |db|
+            config.vm.provision "shell" do |s|
+                s.inline = "mysql -u root --password=secret -e \"CREATE DATABASE IF NOT EXISTS $1\""
+                s.args = db["db"]
+            end
+            config.vm.provision "shell" do |s|
+                s.inline = "mysql -u root --password=secret -e \"grant all privileges on $1.* to 'homestead'@'%'\""
+                s.args = db["db"]
+            end
+        end
+        config.vm.provision "shell" do |s|
+            s.inline = "mysql -u root --password=secret -e \"flush privileges\""
+        end
+    end
   end
 end
