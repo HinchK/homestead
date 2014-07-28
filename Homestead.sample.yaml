@@ -19,3 +19,6 @@ sites:
 variables:
     - key: APP_ENV
       value: local
+
+databases:
+    - db: homestead
