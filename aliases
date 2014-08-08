@@ -25,5 +25,6 @@ alias g:mig="php artisan generate:migration"
 alias g:r="php artisan generate:resource"
 
 #Codeception tests
+alias codecept="vendor/bin/codecept"
 alias t="vendor/bin/codecept run"
 alias tf="vendor/bin/codecept run functional"
