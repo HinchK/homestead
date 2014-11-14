@@ -65,7 +65,7 @@ class Homestead
             s.args = [var["key"], var["value"]]
         end
         config.vm.provision "shell" do |s|
-          s.inline = "export $1='$2'"
+          s.inline = "echo \"\nexport $1=$2\" >> /home/vagrant/.profile"
           s.args = [var["key"], var["value"]]
         end
       end
