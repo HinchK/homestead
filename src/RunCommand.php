@@ -2,10 +2,11 @@
 
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class EditCommand extends Command {
+class RunCommand extends Command {
 
 	/**
 	 * Configure the command options.
@@ -14,9 +15,11 @@ class EditCommand extends Command {
 	 */
 	protected function configure()
 	{
-		$this->setName('edit')
-                  ->setDescription('Edit the Homestead.yaml file');
-	}
+		$this
+			->setName('run')
+			->setDescription('Run commands through the Homestead machine via SSH')
+			->addArgument('ssh-command', InputArgument::REQUIRED, 'The command to pass through to the virtual machine.');
+}
 
 	/**
 	 * Execute the command.
@@ -27,24 +30,11 @@ class EditCommand extends Command {
 	 */
 	public function execute(InputInterface $input, OutputInterface $output)
 	{
-		$command = $this->executable().' '.homestead_path().'/Homestead.yaml';
+		chdir(__DIR__.'/../');
 
-		$process = new Process($command, realpath(__DIR__.'/../'), null, null, null);
+		$command = $input->getArgument('ssh-command');
 
-		$process->run(function($type, $line) use ($output)
-		{
-			$output->write($line);
-		});
-	}
-
-	/**
-	 * Find the correct executable to run depending on the OS.
-	 *
-	 * @return string
-	 */
-	protected function executable()
-	{
-		return strpos(strtoupper(PHP_OS), 'WIN') === 0 ? 'start' : 'open';
+		passthru('vagrant ssh -c "'.$command.'"');
 	}
 
 }
