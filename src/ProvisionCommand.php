@@ -5,7 +5,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class EditCommand extends Command {
+class ProvisionCommand extends Command {
 
 	/**
 	 * Configure the command options.
@@ -14,8 +14,8 @@ class EditCommand extends Command {
 	 */
 	protected function configure()
 	{
-		$this->setName('edit')
-                  ->setDescription('Edit the Homestead.yaml file');
+		$this->setName('provision')
+			->setDescription('Re-provisions the Homestead machine');
 	}
 
 	/**
@@ -27,33 +27,12 @@ class EditCommand extends Command {
 	 */
 	public function execute(InputInterface $input, OutputInterface $output)
 	{
-		$command = $this->executable().' '.homestead_path().'/Homestead.yaml';
-
-		$process = new Process($command, realpath(__DIR__.'/../'), array_merge($_SERVER, $_ENV), null, null);
+		$process = new Process('vagrant provision', realpath(__DIR__.'/../'), array_merge($_SERVER, $_ENV), null, null);
 
 		$process->run(function($type, $line) use ($output)
 		{
 			$output->write($line);
 		});
-	}
-
-	/**
-	 * Find the correct executable to run depending on the OS.
-	 *
-	 * @return string
-	 */
-	protected function executable()
-	{
-		if (strpos(strtoupper(PHP_OS), 'WIN') === 0)
-		{
-			return 'start';
-		}
-		elseif (strpos(strtoupper(PHP_OS), 'DARWIN') === 0)
-		{
-			return 'open';
-		}
-
-		return 'xdg-open';
 	}
 
 }
